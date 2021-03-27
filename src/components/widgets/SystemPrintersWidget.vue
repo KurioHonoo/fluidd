@@ -1,6 +1,6 @@
 <template>
   <v-list dense>
-    <v-subheader>Printers</v-subheader>
+    <v-subheader>{{ $t('app.general.label.printers') }}</v-subheader>
 
     <template v-for="(instance, index) in instances">
       <v-list-item
@@ -27,7 +27,7 @@
         <v-icon>$plus</v-icon>
       </v-list-item-icon>
       <v-list-item-content>
-        <v-list-item-title>Add another printer</v-list-item-title>
+        <v-list-item-title class="text-wrap">{{ $t('app.general.btn.add_printer') }}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
 
@@ -42,7 +42,6 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import consola from 'consola'
 import { InitConfig, InstanceConfig, ApiConfig } from '@/store/config/types'
-import VersionStatus from '@/components/VersionStatus.vue'
 import DialogAddInstance from '@/components/dialogs/dialogAddInstance.vue'
 import StateMixin from '@/mixins/state'
 import { appInit } from '@/init'
@@ -50,7 +49,6 @@ import { Waits } from '@/globals'
 
 @Component({
   components: {
-    VersionStatus,
     DialogAddInstance
   }
 })

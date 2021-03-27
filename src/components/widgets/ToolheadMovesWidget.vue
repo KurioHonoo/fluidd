@@ -23,7 +23,7 @@
           @click="sendGcode('G28', waits.onHomeAll)"
           icon="$home"
           small-icon>
-          All
+          {{ $t('app.general.btn.all') }}
         </btn-toolhead-move>
       </v-col>
     </v-row>
@@ -41,7 +41,7 @@
           :loading="hasWait(waits.onHomeXY)"
           :disabled="!klippyReady || printerPrinting || hasWaits"
           @click="sendGcode('G28 X Y', waits.onHomeXY)"
-          tooltip="Home XY"
+          :tooltip="$t('app.tool.tooltip.home_xy')"
           icon="$home">
         </btn-toolhead-move>
       </v-col>
@@ -58,7 +58,7 @@
           :loading="hasWait(waits.onHomeZ)"
           :disabled="!klippyReady || printerPrinting || hasWaits"
           @click="sendGcode('G28 Z', waits.onHomeZ)"
-          tooltip="Home Z"
+          :tooltip="$t('app.tool.tooltip.home_z')"
           icon="$home">
         </btn-toolhead-move>
       </v-col>
@@ -70,7 +70,7 @@
           @click="sendGcode('G28 X', waits.onHomeX)"
           icon="$home"
           small-icon>
-          X
+          {{ $t('app.tool.btn.home_x') }}
         </btn-toolhead-move>
       </v-col>
     </v-row>
@@ -97,17 +97,17 @@
           @click="sendGcode('G28 Y', waits.onHomeY)"
           icon="$home"
           small-icon>
-          Y
+          {{ $t('app.tool.btn.home_y') }}
         </btn-toolhead-move>
       </v-col>
     </v-row>
     <v-row no-gutters justify="start" class="mb-2">
       <v-col>
-        <v-btn-toggle mandatory dense v-model="toolheadMoveLength">
-          <btn :min-width="49" value="0.1" :disabled="!klippyReady">0.1</btn>
-          <btn :min-width="49" class="pa-0" value="1.0" :disabled="!klippyReady">1.0</btn>
-          <btn :min-width="49" class="pa-0" value="10" :disabled="!klippyReady">10</btn>
-          <btn :min-width="49" class="pa-0" value="100" :disabled="!klippyReady">100</btn>
+        <v-btn-toggle mandatory dense v-model.number="toolheadMoveLength">
+          <btn :min-width="49" :value="0.1" :disabled="!klippyReady">0.1</btn>
+          <btn :min-width="49" class="pa-0" :value="1.0" :disabled="!klippyReady">1.0</btn>
+          <btn :min-width="49" class="pa-0" :value="10" :disabled="!klippyReady">10</btn>
+          <btn :min-width="49" class="pa-0" :value="100" :disabled="!klippyReady">100</btn>
         </v-btn-toggle>
       </v-col>
     </v-row>

@@ -4,8 +4,8 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import './plugins/consola'
 
 import Vue from 'vue'
+import i18n from '@/plugins/i18n'
 import consola from 'consola'
-import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
@@ -20,6 +20,7 @@ import { DayJSPlugin } from './plugins/dayjs'
 import { AxiosPlugin } from './plugins/axios'
 import { plugin } from 'echarts-for-vue'
 import VueVirtualScroller from 'vue-virtual-scroller'
+import App from './App.vue'
 
 // import * as echarts from 'echarts'
 import * as echarts from 'echarts/core'
@@ -37,6 +38,8 @@ import { SVGRenderer } from 'echarts/renderers'
 import vueHeadful from 'vue-headful'
 
 import FluiddBtn from '@/components/inputs/Btn.vue'
+import FluiddSetting from '@/components/inputs/FluiddSetting.vue'
+import FluiddTextField from '@/components/inputs/TextField.vue'
 import FluiddIcon from '@/components/FluiddIcon.vue'
 import BtnCollapse from '@/components/inputs/BtnCollapse.vue'
 import CollapsableCard from '@/components/cards/CollapsableCard.vue'
@@ -63,8 +66,7 @@ Vue.use(FiltersPlugin)
 Vue.use(VueMeta)
 Vue.use(ColorSetPlugin, {})
 Vue.use(VuetifyConfirm, {
-  vuetify,
-  buttonFalseText: 'Cancel'
+  vuetify
 })
 // Vue.use(WorkboxPlugin)
 
@@ -73,7 +75,9 @@ Vue.component('collapsable-card', CollapsableCard)
 Vue.component('vue-headful', vueHeadful)
 Vue.component('inline-help', InlineHelp)
 Vue.component('fluidd-icon', FluiddIcon)
+Vue.component('fluidd-setting', FluiddSetting)
 Vue.component('btn', FluiddBtn)
+Vue.component('text-field', FluiddTextField)
 
 appInit()
   .then((config: InitConfig) => {
@@ -91,9 +95,12 @@ appInit()
       Vue.$socket.connect(config.apiConfig.socketUrl)
     }
 
+    // i18n.locale = store.state.config?.uiSettings.general.locale || Globals.DEFAULT_LOCALE
+
     // Init Vue
     Vue.config.productionTip = false
     new Vue({
+      i18n,
       router,
       store,
       vuetify,

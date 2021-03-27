@@ -1,7 +1,10 @@
+import vuetify from '@/plugins/vuetify'
 import { ActionTree } from 'vuex'
 import { ConfigState, SaveByPath, InitConfig, InstanceConfig, UiSettings, HostConfig, CardConfig, CardState } from './types'
 import { RootState } from '../types'
 import { SocketActions } from '@/socketActions'
+import { loadLocaleMessagesAsync } from '@/plugins/i18n'
+import { Waits } from '@/globals'
 
 export const actions: ActionTree<ConfigState, RootState> = {
   /**
@@ -14,8 +17,37 @@ export const actions: ActionTree<ConfigState, RootState> = {
   /**
    * Init any file configs we may have.
    */
-  async initUiSettings ({ commit }, payload: UiSettings) {
+  async initUiSettings ({ commit, dispatch, state }, payload: UiSettings) {
     commit('setInitUiSettings', payload)
+
+    // Set vuetify to the correct initial theme.
+    if (state.uiSettings.theme) {
+      vuetify.framework.theme.dark = state.uiSettings.theme.isDark
+      vuetify.framework.theme.currentTheme.primary = state.uiSettings.theme.currentTheme.primary
+    }
+
+    // Set the correct language.
+    dispatch('onLocaleChange', payload.general.locale)
+  },
+
+  /**
+   * Sets, and saves a locale change.
+   */
+  async onLocaleChange ({ dispatch, state }, payload: string) {
+    // Set the correct language.
+    // vuetify.framework.lang.current = state.uiSettings.general.locale
+    dispatch('wait/addWait', Waits.onLoadLanguage, { root: true })
+    const locale = await loadLocaleMessagesAsync(payload)
+    dispatch('wait/removeWait', Waits.onLoadLanguage, { root: true })
+
+    // If the locale doesn't match what we have in settings, update it.
+    if (state.uiSettings.general.locale !== locale) {
+      dispatch('saveByPath', {
+        path: 'uiSettings.general.locale',
+        value: locale,
+        server: true
+      })
+    }
   },
 
   /**

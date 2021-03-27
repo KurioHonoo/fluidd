@@ -14,7 +14,13 @@ export const defaultState = (): ConfigState => {
     hostConfig: {
       endpoints: [],
       blacklist: [],
-      hosted: false
+      hosted: false,
+      locales: [
+        { name: 'English', code: 'en' },
+        { name: 'Français', code: 'fr' },
+        { name: 'Chinese', code: 'cn' },
+        { name: 'Nederlands', code: 'nl' }
+      ]
     },
     cardState: {},
     cardLayout: {
@@ -35,6 +41,7 @@ export const defaultState = (): ConfigState => {
     uiSettings: {
       general: {
         instanceName: Globals.APP_NAME,
+        locale: 'en',
         chartVisible: true,
         hideTempWaits: true,
         axis: {
@@ -45,7 +52,7 @@ export const defaultState = (): ConfigState => {
         printTimeEstimationsType: 'file',
         defaultExtrudeLength: 10,
         defaultExtrudeSpeed: 5,
-        defaultToolheadMoveLength: '1.0',
+        defaultToolheadMoveLength: 1.0,
         defaultToolheadXYSpeed: 130,
         defaultToolheadZSpeed: 10,
         useGcodeCoords: false,
@@ -56,13 +63,6 @@ export const defaultState = (): ConfigState => {
         currentTheme: {
           primary: '#2196F3'
         }
-      },
-      camera: {
-        enabled: false,
-        type: 'mjpgstreamer',
-        url: '/webcam/?action=stream',
-        flipX: false,
-        flipY: false
       },
       dashboard: {
         tempPresets: []

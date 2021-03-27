@@ -1,7 +1,7 @@
 <template>
   <collapsable-card
-    title="Endstops"
-    subTitle="Use the refresh button to update endstop status."
+    :title="$t('app.general.title.endstops')"
+    :subTitle="$t('app.endstop.msg.subtitle')"
     :collapsable="false"
     icon="$expandHorizontal">
     <template v-slot:collapse-button>
@@ -25,7 +25,7 @@
           small
           label>
           <v-icon small left>{{ (item === 'open') ? '$blankCircle' : '$markedCircle' }}</v-icon>
-          {{ item.toUpperCase() }}
+          {{ $t('app.endstop.label.' + item.toLowerCase()) }}
         </v-chip>
       </v-layout>
     </v-card-text>

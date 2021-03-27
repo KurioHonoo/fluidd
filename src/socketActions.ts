@@ -5,6 +5,10 @@ import { NotifyOptions } from '@/plugins/socketClient'
 import consola from 'consola'
 
 const baseEmit = (method: string, options: NotifyOptions) => {
+  if (!Vue.$socket) {
+    consola.warn('Socket emit denied, socket not ready.', method, options)
+    return
+  }
   if (
     !store.state.socket?.disconnecting &&
     !store.state.socket?.connecting
@@ -293,11 +297,19 @@ export const SocketActions = {
     )
   },
 
-  async serverHistoryList (limit: number) {
+  async serverHistoryList (limit?: number) {
     baseEmit(
       'server.history.list', {
         dispatch: 'history/onInit',
         params: { limit }
+      }
+    )
+  },
+
+  async serverHistoryTotals () {
+    baseEmit(
+      'server.history.totals', {
+        dispatch: 'history/onInit'
       }
     )
   },
@@ -307,7 +319,7 @@ export const SocketActions = {
     let dispatch = 'history/onDelete'
     if (uid === 'all') {
       params = { all: true }
-      dispatch = 'history/deleteAll'
+      dispatch = 'history/onDeleteAll'
     }
     baseEmit(
       'server.history.delete_job', {

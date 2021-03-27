@@ -1,9 +1,9 @@
 <template>
   <v-navigation-drawer
-    permanent
     app
     clipped
     color="transparent"
+    width="210"
   >
     <v-list
       dense
@@ -38,13 +38,15 @@ import SystemCommandsWidget from '@/components/widgets/SystemCommandsWidget.vue'
   }
 })
 export default class SettingsBar extends Mixins(StateMixin) {
-  items = [
-    { name: 'General', icon: '$printer', ref: '#general' },
-    { name: 'Camera', icon: '$camera', ref: '#camera' },
-    { name: 'Theme', icon: '$cogs', ref: '#theme' },
-    { name: 'Toolhead', icon: '$printer3dNozzle', ref: '#toolhead' },
-    { name: 'Macros', icon: '$fileCode', ref: '#macros' },
-    { name: 'Presets', icon: '$fire', ref: '#presets' }
-  ]
+  get items () {
+    return [
+      { name: this.$t('app.setting.title.general'), icon: '$printer', ref: '#general' },
+      { name: this.$tc('app.setting.title.camera', 2), icon: '$camera', ref: '#camera' },
+      { name: this.$t('app.setting.title.theme'), icon: '$cogs', ref: '#theme' },
+      { name: this.$t('app.setting.title.tool'), icon: '$printer3dNozzle', ref: '#toolhead' },
+      { name: this.$t('app.setting.title.macros'), icon: '$fileCode', ref: '#macros' },
+      { name: this.$t('app.setting.title.thermal_presets'), icon: '$fire', ref: '#presets' }
+    ]
+  }
 }
 </script>

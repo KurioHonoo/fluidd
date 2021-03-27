@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-subheader id="macros">Macros</v-subheader>
+    <v-subheader id="macros">{{ $t('app.setting.title.macros') }}</v-subheader>
     <v-card
       :elevation="5"
       dense
@@ -19,6 +19,29 @@
           </v-col>
         </v-row>
       </v-card-text>
+
+      <v-divider />
+
+      <fluidd-setting :title="$t('app.setting.label.toggle')">
+        <btn
+          outlined
+          small
+          color="primary"
+          @click="handleAllOff"
+        >
+          {{ $t('app.setting.label.all_off') }}
+        </btn>
+
+        <btn
+          outlined
+          small
+          color="primary"
+          @click="handleAllOn"
+          class="ml-2"
+        >
+          {{ $t('app.setting.label.all_on') }}
+        </btn>
+      </fluidd-setting>
     </v-card>
   </div>
 </template>
@@ -39,6 +62,14 @@ export default class MacroSettingsCard extends Mixins(StateMixin) {
   changeMacro (macro: Macro, value: boolean) {
     const newMacro = { ...macro, visible: value }
     this.$store.dispatch('macros/saveMacro', newMacro)
+  }
+
+  handleAllOn () {
+    this.$store.dispatch('macros/saveAllOn')
+  }
+
+  handleAllOff () {
+    this.$store.dispatch('macros/saveAllOff')
   }
 }
 </script>

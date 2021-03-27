@@ -1,12 +1,12 @@
 <template>
   <collapsable-card
-    title="Printer Stats"
+    :title="$t('app.general.title.stats')"
     icon="$chart">
 
     <v-card-text>
       <div class="mb-4">
         <v-layout justify-space-between>
-          <div class="grey--text text--darken-2">Disk Usage</div>
+          <div class="grey--text text--darken-2">{{ $t('app.file_system.label.disk_usage') }}</div>
         </v-layout>
         <v-progress-linear
           :size="90"
@@ -20,70 +20,50 @@
           <div class="grey--text">
             <span class="focus--text">
               {{ $filters.getReadableFileSizeString(fileSystemUsage.used) }}
-            </span> used
+            </span> {{ $t('app.general.label.used') }}
           </div>
           <div class="grey--text">
             <span class="focus--text">
               {{ $filters.getReadableFileSizeString(fileSystemUsage.free) }}
-            </span> free
+            </span> {{ $t('app.general.label.free') }}
           </div>
         </v-layout>
       </div>
 
-      <v-row>
+      <v-row v-if="supportsHistoryPlugin">
         <v-col cols="3">
           <v-card outlined class="px-2 py-1 text-center stat-square">
-            <div class="grey--text text--darken-2">Total Print Jobs</div>
+            <div class="grey--text text--darken-2">{{ $t('app.general.label.total_jobs') }}</div>
             <div class="grey--text focus--text">{{ rollup.total_jobs }}</div>
-            <div class="grey--text text--darken-2">Longest Job</div>
-            <div class="grey--text focus--text">{{ $filters.formatCounterTime(rollup.longest_duration) }}</div>
+            <div class="grey--text text--darken-2">{{ $t('app.general.label.longest_job') }}</div>
+            <div class="grey--text focus--text">{{ $filters.formatCounterTime(rollup.longest_job) }}</div>
           </v-card>
         </v-col>
         <v-col cols="3">
           <v-card outlined class="px-2 py-1 text-center stat-square">
-            <div class="grey--text text--darken-2">Total time</div>
-            <div class="grey--text focus--text">{{ $filters.formatCounterTime(rollup.total_duration) }}</div>
-            <div class="grey--text text--darken-2">Avg Per Print</div>
-            <div class="grey--text focus--text">{{ $filters.formatCounterTime(rollup.total_duration_avg) }}</div>
+            <div class="grey--text text--darken-2">{{ $t('app.general.label.total_time') }}</div>
+            <div class="grey--text focus--text">{{ $filters.formatCounterTime(rollup.total_time) }}</div>
+            <div class="grey--text text--darken-2">{{ $t('app.general.label.total_time_avg') }}</div>
+            <div class="grey--text focus--text">{{ $filters.formatCounterTime(rollup.total_avg) }}</div>
           </v-card>
         </v-col>
         <v-col cols="3">
           <v-card outlined class="px-2 py-1 text-center stat-square">
-            <div class="grey--text text--darken-2">Total print time</div>
-            <div class="grey--text focus--text">{{ $filters.formatCounterTime(rollup.print_duration) }}</div>
-            <div class="grey--text text--darken-2">Avg Per Print</div>
-            <div class="grey--text focus--text">{{ $filters.formatCounterTime(rollup.print_duration_avg) }}</div>
+            <div class="grey--text text--darken-2">{{ $t('app.general.label.total_print_time') }}</div>
+            <div class="grey--text focus--text">{{ $filters.formatCounterTime(rollup.total_print_time) }}</div>
+            <div class="grey--text text--darken-2">{{ $t('app.general.label.total_print_time_avg') }}</div>
+            <div class="grey--text focus--text">{{ $filters.formatCounterTime(rollup.print_avg) }}</div>
           </v-card>
         </v-col>
         <v-col cols="3">
           <v-card outlined class="px-2 py-1 text-center stat-square">
-            <div class="grey--text text--darken-2">Total filament Used</div>
-            <div class="grey--text focus--text">{{ $filters.getReadableLengthString(rollup.filament_used) }}</div>
-            <div class="grey--text text--darken-2">Avg Per Print</div>
-            <div class="grey--text focus--text">{{ $filters.getReadableLengthString(rollup.filament_used_avg) }}</div>
+            <div class="grey--text text--darken-2">{{ $t('app.general.label.total_filament') }}</div>
+            <div class="grey--text focus--text">{{ $filters.getReadableLengthString(rollup.total_filament_used) }}</div>
+            <div class="grey--text text--darken-2">{{ $t('app.general.label.total_filament_avg') }}</div>
+            <div class="grey--text focus--text">{{ $filters.getReadableLengthString(rollup.filament_avg) }}</div>
           </v-card>
         </v-col>
       </v-row>
-
-      <!-- <v-card outlined class="stat-square mt-4">
-        <v-card-text>
-          <div class="grey--text d-flex flex-row justify-space-between">
-            <span class="grey--text text--darken-2 mr-2">Fluidd:</span>
-            <span class="">v{{ appInfo.fluidd.version }}-{{ appInfo.fluidd.hash }}</span>
-          </div>
-
-          <div class="grey--text d-flex flex-row justify-space-between">
-            <span class="grey--text text--darken-2 mr-2">Moonraker:</span>
-            <span class="">{{ appInfo.moonraker.version }}-{{ appInfo.moonraker.current_hash }}</span>
-          </div>
-
-          <div class="grey--text d-flex flex-row justify-space-between">
-            <span class="grey--text text--darken-2 mr-2">Klipper:</span>
-            <span class="">{{ appInfo.klipper.version }}-{{ appInfo.klipper.current_hash }}</span>
-          </div>
-        </v-card-text>
-      </v-card> -->
-
     </v-card-text>
   </collapsable-card>
 </template>
@@ -119,6 +99,10 @@ export default class PrinterStatsCard extends Vue {
       moonraker: this.$store.state.version.components.moonraker || {},
       klipper: this.$store.state.version.components.klipper || {}
     }
+  }
+
+  get supportsHistoryPlugin () {
+    return this.$store.getters['server/pluginSupport']('history')
   }
 }
 </script>

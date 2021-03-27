@@ -82,7 +82,8 @@ import {
   mdiMotionOutline,
   mdiThermometerLow,
   mdiHelpCircle,
-  mdiHistory
+  mdiHistory,
+  mdiFilterOutline
 } from '@mdi/js'
 
 /**
@@ -90,6 +91,9 @@ import {
  */
 export const Globals = Object.freeze({
   APP_NAME: 'fluidd',
+  DEFAULTS: {
+    CAMERA_URL: '/webcam?action=stream'
+  },
   NETWORK_REQUEST_TIMEOUT: 500,
   KLIPPY_RETRY_DELAY: 1500,
   SOCKET_RETRY_DELAY: 2000,
@@ -98,7 +102,7 @@ export const Globals = Object.freeze({
   CONSOLE_SEND_PREFIX: '$ ',
   CONSOLE_COMMAND_HISTORY: 20,
   CHART_HISTORY_RETENTION: 1200,
-  HISTORY_RETENTION: 20,
+  JOB_HISTORY_LOAD: 50,
   KLIPPY_DISCONNECTED_REDIRECT: '/configuration',
   LOCAL_CARDSTATE_STORAGE_KEY: 'cardState', // collapsed or not
   LOCAL_CARDLAYOUT_STORAGE_KEY: 'cardLayout2', // Specific layout / enabled / disabled
@@ -109,7 +113,8 @@ export const Globals = Object.freeze({
       uiSettings: { name: 'uiSettings', dispatch: 'config/initUiSettings' },
       macros: { name: 'macros', dispatch: 'macros/initMacros' },
       console: { name: 'console', dispatch: 'console/initConsole' },
-      charts: { name: 'charts', dispatch: 'charts/initCharts' }
+      charts: { name: 'charts', dispatch: 'charts/initCharts' },
+      cameras: { name: 'cameras', dispatch: 'cameras/initCameras' }
     }
   },
   MOONRAKER_PLUGINS: {
@@ -211,7 +216,8 @@ export const Icons = Object.freeze({
   printer3dNozzleAlert: mdiPrinter3dNozzleAlertOutline,
   bedMesh: mdiViewGridOutline,
   host: mdiDesktopTower,
-  history: mdiHistory
+  history: mdiHistory,
+  filter: mdiFilterOutline
 })
 
 export const Waits = Object.freeze({
@@ -246,7 +252,8 @@ export const Waits = Object.freeze({
   onSetDeceleration: 'onSetDeceleration',
   onSetSCV: 'onSetSCV',
   onUpload: 'onUpload',
-  onExtruderChange: 'onExtruderChange'
+  onExtruderChange: 'onExtruderChange',
+  onLoadLanguage: 'onLoadLanguage'
 })
 
 export const defaultPlotLayout = Object.freeze({

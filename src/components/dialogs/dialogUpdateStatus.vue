@@ -56,17 +56,17 @@ export default class DialogUpdateStatus extends Mixins(StateMixin) {
 
   get title () {
     if (this.updating) {
-      return 'Updating, please wait...'
+      return this.$t('app.version.status.updating')
     } else {
-      return 'Updates finished'
+      return this.$t('app.version.status.finished')
     }
   }
 
   get buttonTitle () {
     if (this.updating) {
-      return 'Updating...'
+      return this.$t('app.version.status.updating')
     } else {
-      return 'Finish'
+      return this.$t('app.version.btn.finish')
     }
   }
 

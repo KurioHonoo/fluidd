@@ -22,20 +22,34 @@
 
       <btn text to="/" color="" class="d-none d-md-flex mx-1">
         <v-icon small class="mr-md-1">$home</v-icon>
-        <span>Dashboard</span>
+        <span>{{ $t('app.general.title.home') }}</span>
       </btn>
       <btn text to="/jobs" color="" class="d-none d-md-flex mx-1">
         <v-icon small class="mr-md-1">$files</v-icon>
-        <span>Jobs</span>
+        <span>{{ $t('app.general.title.jobs') }}</span>
       </btn>
       <btn text to="/tune" color="" class="d-none d-md-flex mx-1">
         <v-icon small class="mr-md-1">$tune</v-icon>
-        <span>Tune</span>
+        <span>{{ $t('app.general.title.tune') }}</span>
       </btn>
-      <btn text to="/configure" color="" class="d-none d-md-flex mx-1">
-        <v-icon small class="mr-md-1">$cogs</v-icon>
-        <span>Configure</span>
-      </btn>
+      <v-badge
+        bordered
+        color="warning"
+        left
+        overlap
+        :value="hasUpdates"
+        offset-y="17"
+        offset-x="22"
+        class="d-none d-md-flex mx-1"
+      >
+        <template v-slot:badge>
+          <strong class="black--text">!</strong>
+        </template>
+        <btn text to="/configure" color="" class="d-none d-md-flex mx-1">
+          <v-icon small class="mr-md-1">$cogs</v-icon>
+          <span>{{ $t('app.general.title.configure') }}</span>
+        </btn>
+      </v-badge>
       <v-tooltip bottom v-if="socketConnected">
         <template v-slot:activator="{ on, attrs }">
           <btn
@@ -48,22 +62,12 @@
             <v-icon>$estop</v-icon>
           </btn>
         </template>
-        Emergency Stop
+        {{ $t('app.general.tooltip.estop') }}
       </v-tooltip>
 
-      <v-badge
-        bordered
-        color="warning"
-        dot
-        overlap
-        :value="hasUpdates"
-        :offset-y="15"
-        :offset-x="15"
-      >
-        <btn icon color="" @click="$emit('drawer')">
-          <v-icon>$menu</v-icon>
-        </btn>
-      </v-badge>
+      <btn icon color="" @click="$emit('drawer')">
+        <v-icon>$menu</v-icon>
+      </btn>
 
     </v-container>
   </v-app-bar>

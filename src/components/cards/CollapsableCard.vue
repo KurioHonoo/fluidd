@@ -358,7 +358,7 @@ export default class ToolheadCard extends Vue {
   mounted () {
     this.$emit('collapsed', this.isCollapsed)
     if (this.hasCollapseButtonSlot) {
-      this.collapsable = false
+      // this.collapsable = false
     }
   }
 
@@ -382,9 +382,3 @@ export default class ToolheadCard extends Vue {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-  .card-title {
-    min-height: 48px;
-  }
-</style>

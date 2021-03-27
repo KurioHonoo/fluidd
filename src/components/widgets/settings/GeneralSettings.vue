@@ -1,67 +1,70 @@
 <template>
   <div>
-    <v-subheader id="general">General</v-subheader>
+    <v-subheader id="general">{{ $t('app.setting.title.general') }}</v-subheader>
     <v-card
       :elevation="5"
       dense
       class="mb-4">
-      <v-list
-        color="transparent"
-      >
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title>Printer name</v-list-item-title>
-          </v-list-item-content>
-          <v-list-item-action>
-            <v-text-field
-              filled
-              dense
-              single-line
-              hide-details="auto"
-              ref="instanceName"
-              :rules="instanceNameRules"
-              :value="instanceName"
-              @change="setInstanceName"
-            ></v-text-field>
-          </v-list-item-action>
-        </v-list-item>
 
-        <v-divider></v-divider>
+      <fluidd-setting :title="$t('app.setting.label.printer_name')">
+        <v-text-field
+          filled
+          dense
+          single-line
+          hide-details="auto"
+          ref="instanceName"
+          :rules="instanceNameRules"
+          :value="instanceName"
+          :default-value="$globals.APP_NAME"
+          @change="setInstanceName"
+        ></v-text-field>
+      </fluidd-setting>
 
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title>
-              Time estimates
-              <inline-help bottom small class="ml-2">
-                Duration only<br />
-                Similar to a klipper LCD, this only shows duration with no estimates.<br /><br />
+      <v-divider></v-divider>
 
-                Slicer<br />
-                Uses the slicer estimates for display. You must enable this in your slicer.<br /><br />
+      <fluidd-setting :title="$t('app.setting.label.language')">
+        <v-select
+          filled
+          dense
+          single-line
+          hide-details="auto"
+          :items="supportedLocales"
+          :value="locale"
+          item-text="name"
+          item-value="code"
+          @change="setLocale"
+        ></v-select>
+      </fluidd-setting>
 
-                File<br />
-                Takes progress percent, and duration to estimate total duration.<br />
-                More accurate over time.<br /><br />
+      <v-divider></v-divider>
 
-                Filament<br />
-                Takes used filament vs estimated filament to estimate total duration.<br />
-                More accurate over time.
-              </inline-help>
-            </v-list-item-title>
-          </v-list-item-content>
-          <v-list-item-action>
-            <v-select
-              filled
-              dense
-              hide-details="auto"
-              :items="estimateTypes"
-              item-text="name"
-              item-value="value"
-              v-model="printTimeEstimateType">
-            </v-select>
-          </v-list-item-action>
-        </v-list-item>
-      </v-list>
+      <fluidd-setting>
+        <template v-slot:title>
+          <span class="text-wrap">{{ $t('app.setting.label.time_estimates') }}</span>
+          <inline-help bottom small class="ml-2">
+            <span>{{ $t('app.setting.timer_options.duration') }}</span><br />
+            <span>{{ $t('app.setting.timer_options.duration_description') }}</span><br /><br />
+
+            <span>{{ $t('app.setting.timer_options.slicer') }}</span><br />
+            <span>{{ $t('app.setting.timer_options.slicer_description') }}</span><br /><br />
+
+            <span>{{ $t('app.setting.timer_options.file') }}</span><br />
+            <span v-html="$t('app.setting.timer_options.file_description')"></span><br /><br />
+
+            <span>{{ $t('app.setting.timer_options.filament') }}</span><br />
+            <span v-html="$t('app.setting.timer_options.filament_description')"></span>
+          </inline-help>
+        </template>
+        <v-select
+          filled
+          dense
+          hide-details="auto"
+          :items="estimateTypes"
+          item-text="name"
+          item-value="value"
+          v-model="printTimeEstimateType">
+        </v-select>
+      </fluidd-setting>
     </v-card>
   </div>
 </template>
@@ -80,12 +83,14 @@ export default class GeneralSettingsCard extends Mixins(StateMixin) {
     (v: string) => !!v || 'Required'
   ]
 
-  estimateTypes = [
-    { name: 'Duration only', value: 'totals' },
-    { name: 'Slicer', value: 'slicer' },
-    { name: 'File Estimation', value: 'file' },
-    { name: 'Filament Estimation', value: 'filament' }
-  ]
+  get estimateTypes () {
+    return [
+      { name: this.$t('app.setting.timer_options.duration'), value: 'totals' },
+      { name: this.$t('app.setting.timer_options.slicer'), value: 'slicer' },
+      { name: this.$t('app.setting.timer_options.file'), value: 'file' },
+      { name: this.$t('app.setting.timer_options.filament'), value: 'filament' }
+    ]
+  }
 
   get instanceName () {
     return this.$store.state.config.uiSettings.general.instanceName
@@ -93,6 +98,18 @@ export default class GeneralSettingsCard extends Mixins(StateMixin) {
 
   setInstanceName (value: string) {
     if (this.instanceNameElement.valid) this.$store.dispatch('config/updateInstance', value)
+  }
+
+  get locale () {
+    return this.$store.state.config.uiSettings.general.locale
+  }
+
+  get supportedLocales () {
+    return this.$store.state.config.hostConfig.locales
+  }
+
+  setLocale (value: string) {
+    this.$store.dispatch('config/onLocaleChange', value)
   }
 
   get printTimeEstimateType () {

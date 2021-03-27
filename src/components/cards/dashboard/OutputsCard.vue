@@ -1,6 +1,6 @@
 <template>
   <collapsable-card
-    title="Fans &amp; Outputs"
+    :title="$t('app.general.title.fans_outputs')"
     icon="$motion"
     :draggable="true"
     :inLayout="inLayout"

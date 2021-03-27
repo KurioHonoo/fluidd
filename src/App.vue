@@ -1,5 +1,6 @@
 <template>
-  <v-app class="fluidd">
+  <v-app v-if="loading"></v-app>
+  <v-app v-else class="fluidd">
     <vue-headful
       :title="pageTitle"
       :head="pageIcon"
@@ -12,6 +13,7 @@
     <router-view name="navigation"></router-view>
 
     <FlashMessage
+      v-if="flashMessage"
       v-model="flashMessage.open"
       :text="flashMessage.text"
       :type="flashMessage.type"
@@ -39,6 +41,7 @@ import AppFooter from '@/components/AppFooter.vue'
 import SocketDisconnectedWidget from '@/components/widgets/SocketDisconnectedWidget.vue'
 import FlashMessage from '@/components/FlashMessage.vue'
 import DialogUpdateStatus from '@/components/dialogs/dialogUpdateStatus.vue'
+import { Waits } from './globals'
 
 @Component({
   components: {
@@ -56,34 +59,12 @@ export default class App extends Mixins(StateMixin) {
 
   flashMessage: FlashMessageType = {
     open: false,
-    text: undefined,
+    text: '',
     type: undefined
   }
 
-  // created () {
-  //   if (this.$workbox) {
-  //     this.$workbox.addEventListener('waiting', () => {
-  //       this.showUpdateUI = true
-  //     })
-  //   }
-  // }
-
-  // async accept () {
-  //   this.showUpdateUI = false
-  //   if (this.$workbox) {
-  //     await this.$workbox.messageSW({ type: 'SKIP_WAITING' })
-  //   }
-  // }
-
-  mounted () {
-    EventBus.$on('flashMessage', (payload: FlashMessageType) => {
-      this.flashMessage.text = (payload && payload.text) || undefined
-      this.flashMessage.type = (payload && payload.type) || undefined
-      this.flashMessage.timeout = (payload && payload.timeout !== undefined) ? payload.timeout : undefined
-      this.flashMessage.open = true
-    })
-  }
-
+  // Our app is in a loading state when the socket isn't quite ready, or
+  // our translations are loading.
   get updating () {
     return this.$store.state.version.busy
   }
@@ -158,8 +139,22 @@ export default class App extends Mixins(StateMixin) {
     }
   }
 
+  mounted () {
+    // this.onLoadLocale(this.$i18n.locale)
+    EventBus.$on('flashMessage', (payload: FlashMessageType) => {
+      this.flashMessage.text = (payload && payload.text) || undefined
+      this.flashMessage.type = (payload && payload.type) || undefined
+      this.flashMessage.timeout = (payload && payload.timeout !== undefined) ? payload.timeout : undefined
+      this.flashMessage.open = true
+    })
+  }
+
   onDrawerChange () {
     this.drawer = !this.drawer
+  }
+
+  get loading () {
+    return this.$store.getters['wait/hasWait'](Waits.onLoadLanguage)
   }
 }
 </script>

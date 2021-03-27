@@ -1,11 +1,25 @@
 <template>
   <div class="file-system">
     <!-- // search here -->
+    <v-row justify="end">
+      <v-col cols="12" sm="4" md="3" class="px-6 pt-5">
+        <v-text-field
+          v-model="search"
+          outlined
+          dense
+          single-line
+          hide-details
+          append-icon="$magnify">
+        </v-text-field>
+      </v-col>
+    </v-row>
+
     <v-data-table
       :items="history"
       :headers="headers"
       :items-per-page="5"
       :single-expand="true"
+      :search="search"
       :expanded="expanded"
       item-key="job_id"
       sort-by="start_time"
@@ -45,7 +59,7 @@
       </template>
 
       <template
-        v-slot:[`item.name`]="{ item }"
+        v-slot:[`item.filename`]="{ item }"
       >
         <span class="grey--text">
           {{ getFilePaths(item.filename).filename }}
@@ -115,7 +129,6 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import JobHistoryItemStatus from './JobHistoryItemStatus.vue'
-import JobHistoryMenu from './JobHistoryMenu.vue'
 import FilesMixin from '@/mixins/files'
 import { getFilePaths } from '@/store/helpers'
 import { HistoryItem } from '@/store/history/types'
@@ -123,22 +136,22 @@ import { SocketActions } from '@/socketActions'
 
 @Component({
   components: {
-    JobHistoryItemStatus,
-    JobHistoryMenu
+    JobHistoryItemStatus
   }
 })
 export default class JobHistory extends Mixins(FilesMixin) {
   expanded: HistoryItem[] = []
+  search = ''
 
   get headers () {
     return [
       { text: '', value: 'data-table-icons', sortable: false, width: '24px' },
-      { text: 'name', value: 'name' },
-      { text: 'status', value: 'status' },
-      { text: 'Started', value: 'start_time' },
-      { text: 'Print Duration', value: 'print_duration' },
-      { text: 'Filament Used', value: 'filament_used' },
-      { text: 'Actions', value: 'actions', sortable: false }
+      { text: this.$t('app.general.table.header.name'), value: 'filename' },
+      { text: this.$t('app.general.table.header.status'), value: 'status' },
+      { text: this.$t('app.general.table.header.start_time'), value: 'start_time' },
+      { text: this.$t('app.general.table.header.print_duration'), value: 'print_duration' },
+      { text: this.$t('app.general.table.header.filament_used'), value: 'filament_used' },
+      { text: this.$t('app.general.table.header.actions'), value: 'actions', sortable: false }
     ]
   }
 

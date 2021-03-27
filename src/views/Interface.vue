@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="constrained-width">
     <v-row justify="center">
-      <v-col cols="6">
+      <v-col cols="12" md="6">
         <general-settings></general-settings>
         <camera-settings></camera-settings>
         <theme-settings></theme-settings>
@@ -21,7 +21,6 @@ import GeneralSettings from '@/components/widgets/settings/GeneralSettings.vue'
 import TemperaturePresetSettings from '@/components/widgets/settings/TemperaturePresetSettings.vue'
 import CameraSettings from '@/components/widgets/settings/CameraSettings.vue'
 import ToolheadSettings from '@/components/widgets/settings/ToolheadSettings.vue'
-import PrintTimeEstimateSettings from '@/components/widgets/settings/PrintTimeEstimateSettings.vue'
 import ThemeSettings from '@/components/widgets/settings/ThemeSettings.vue'
 
 @Component({
@@ -31,7 +30,6 @@ import ThemeSettings from '@/components/widgets/settings/ThemeSettings.vue'
     TemperaturePresetSettings,
     CameraSettings,
     ToolheadSettings,
-    PrintTimeEstimateSettings,
     ThemeSettings
   }
 })

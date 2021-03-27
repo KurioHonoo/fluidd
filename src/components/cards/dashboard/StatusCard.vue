@@ -2,13 +2,13 @@
   <collapsable-card
     :hide-menu="hidePrinterMenu"
     :collapsable="printerPrinting"
-    title="Status"
+    :title="$t('app.general.title.status')"
     icon="$printer3d">
 
     <template v-slot:title>
       <v-icon left>$printer3d</v-icon>
       <span class="font-weight-light">
-        {{ printerState }}
+        {{ $t('app.printer.state.' + printerState) }}
         <span class="font-weight-light text-subtitle-2 ml-sm-4 d-block d-sm-inline-block" v-show="printerMessage">{{ printerMessage }}</span>
       </span>
     </template>
@@ -23,7 +23,7 @@
         small
         class="ma-1">
         <v-icon small>$pause</v-icon>
-        <span>Pause</span>
+        <span>{{ $t('app.general.btn.pause') }}</span>
       </btn>
 
       <btn
@@ -35,7 +35,7 @@
         small
         class="ma-1">
         <v-icon small>$cancel</v-icon>
-        <span>Cancel</span>
+        <span>{{ $t('app.general.btn.cancel') }}</span>
       </btn>
 
       <btn
@@ -47,7 +47,7 @@
         small
         class="ma-1">
         <v-icon small class="mr-1">$resume</v-icon>
-        <span>Resume</span>
+        <span>{{ $t('app.general.btn.resume') }}</span>
       </btn>
 
       <btn
@@ -57,7 +57,7 @@
         small
         class="ma-1">
         <v-icon small class="mr-1">$refresh</v-icon>
-        <span>Reset File</span>
+        <span>{{ $t('app.general.btn.reset_file') }}</span>
       </btn>
 
       <btn
@@ -66,29 +66,15 @@
         small
         class="ma-1">
         <v-icon small class="mr-1">$reprint</v-icon>
-        <span>Reprint</span>
+        <span>{{ $t('app.general.btn.reprint') }}</span>
       </btn>
 
-      <btn
+      <reprint-menu
         v-if="supportsHistoryPlugin && !printerPrinting && !printerPaused && history.length > 0"
-        @click="showHistory = !showHistory"
-        small
-        class="ma-1">
-        <v-icon small class="mr-1">$reprint</v-icon>
-        <span>Reprint</span>
-        <v-icon small class="ml-1" v-if="showHistory">$chevronUp</v-icon>
-        <v-icon small class="ml-1" v-else>$chevronDown</v-icon>
-      </btn>
-
-      <!-- <reprint-menu v-if="supportsHistoryPlugin"></reprint-menu> -->
+        @print="handleReprint"
+      ></reprint-menu>
     </template>
 
-    <v-expand-transition v-if="supportsHistoryPlugin">
-      <reprint-menu
-        v-show="showHistory"
-        @print="handleReprint">
-      </reprint-menu>
-    </v-expand-transition>
     <print-status-widget v-if="showStatus"></print-status-widget>
 
   </collapsable-card>
@@ -115,7 +101,7 @@ export default class StatusCard extends Mixins(StateMixin, FilesMixin) {
     if (!this.supportsHistoryPlugin) {
       return (!this.printerPrinting && !this.printerPaused && !this.filename)
     } else {
-      return (!this.printerPrinting && !this.printerPaused && this.history === 0)
+      return (!this.printerPrinting && !this.printerPaused && this.history > 0)
     }
   }
 
@@ -124,7 +110,7 @@ export default class StatusCard extends Mixins(StateMixin, FilesMixin) {
   }
 
   get history () {
-    return this.$store.getters['history/getUniqueHistory'](2)
+    return this.$store.getters['history/getUniqueHistory'](3)
   }
 
   get showStatus () {
@@ -140,7 +126,11 @@ export default class StatusCard extends Mixins(StateMixin, FilesMixin) {
   }
 
   cancelPrint () {
-    this.$confirm('Are you sure?')
+    this.$tc('app.general.simple_form.msg.confirm')
+    this.$confirm(
+      this.$tc('app.general.simple_form.msg.confirm'),
+      { title: this.$tc('app.general.label.confirm'), color: 'secondary', icon: '$error' }
+    )
       .then(res => {
         if (res) {
           SocketActions.printerPrintCancel()

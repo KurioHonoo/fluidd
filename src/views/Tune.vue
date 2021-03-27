@@ -22,13 +22,8 @@ import { Component, Mixins } from 'vue-property-decorator'
 import StateMixin from '@/mixins/state'
 import EndStopsCard from '@/components/cards/configuration/EndStopsCard.vue'
 import RunoutSensorsCard from '@/components/cards/configuration/RunoutSensorsCard.vue'
-import FileSystem from '@/components/widgets/filesystem/FileSystem.vue'
 import KlippyCard from '@/components/cards/KlippyCard.vue'
 import BedMeshCard from '@/components/cards/configuration/BedMeshCard.vue'
-import BedAdjustCard from '@/components/cards/configuration/BedAdjustCard.vue'
-import LogsCard from '@/components/cards/configuration/LogsCard.vue'
-import PrinterStatsCard from '@/components/cards/configuration/PrinterStatsCard.vue'
-import PrinterHistoryCard from '@/components/cards/configuration/PrintHistoryCard.vue'
 
 const BedMeshWidget = () => import(/* webpackChunkName: "bedmesh", webpackPrefetch: true */ '@/components/widgets/configuration/BedMeshWidget.vue')
 
@@ -36,14 +31,9 @@ const BedMeshWidget = () => import(/* webpackChunkName: "bedmesh", webpackPrefet
   components: {
     BedMeshCard,
     BedMeshWidget,
-    BedAdjustCard,
     EndStopsCard,
     RunoutSensorsCard,
-    FileSystem,
-    KlippyCard,
-    LogsCard,
-    PrinterStatsCard,
-    PrinterHistoryCard
+    KlippyCard
   }
 })
 export default class Tune extends Mixins(StateMixin) {

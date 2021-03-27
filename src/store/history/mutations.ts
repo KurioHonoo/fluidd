@@ -15,7 +15,9 @@ export const mutations: MutationTree<HistoryState> = {
    * Inits the console history from db
    */
   setInitHistory (state, payload: HistoryState) {
-    if (payload) Object.assign(state, payload)
+    if (payload) {
+      Object.assign(state, payload)
+    }
   },
 
   /**

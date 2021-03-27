@@ -30,7 +30,6 @@ export interface CardState {
 export interface UiSettings {
   general: GeneralConfig;
   theme: ThemeConfig;
-  camera: CameraConfig;
   dashboard: DashboardConfig;
 }
 
@@ -38,16 +37,23 @@ export interface HostConfig {
   endpoints: string[];
   blacklist: string[];
   hosted: boolean;
+  locales: SupportedLocale[];
+}
+
+export interface SupportedLocale {
+  name: string;
+  code: string;
 }
 
 export interface GeneralConfig {
   instanceName: string;
+  locale: string;
   chartVisible: boolean;
   hideTempWaits: boolean;
   axis: Axis;
   defaultExtrudeLength: number;
   defaultExtrudeSpeed: number;
-  defaultToolheadMoveLength: string;
+  defaultToolheadMoveLength: number;
   defaultToolheadXYSpeed: number;
   defaultToolheadZSpeed: number;
   printTimeEstimationsType: 'file' | 'slicer' | 'filament' | 'totals';
@@ -66,14 +72,6 @@ export interface Axis {
 
 export interface AxisConfig {
   inverted: boolean;
-}
-
-export interface CameraConfig {
-  enabled: boolean;
-  type: 'mjpgstreamer' | 'ipcamera';
-  url: string;
-  flipX: boolean;
-  flipY: boolean;
 }
 
 export interface DashboardConfig {

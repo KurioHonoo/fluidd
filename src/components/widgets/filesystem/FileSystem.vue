@@ -2,6 +2,7 @@
   <v-card
     class="filesystem-wrapper"
     :height="height"
+    :max-height="maxHeight"
     @dragenter.capture.prevent="handleDragEnter"
     @dragover.prevent
     @dragleave.self.prevent="handleDragLeave"
@@ -29,6 +30,7 @@
       @add-file="handleAddFileDialog"
       @add-dir="handleAddDirDialog"
       @upload="handleUpload"
+      @filter="handleFilter"
     ></file-system-toolbar>
 
     <file-system-browser
@@ -37,6 +39,7 @@
       :loading="filesLoading"
       :disabled="disabled"
       :search="search"
+      :filters="filters"
       :files="files"
       :drag-state.sync="dragState.browserState"
       @row-click="handleRowClick"
@@ -92,6 +95,7 @@
 
 <script lang="ts">
 import { Component, Prop, Mixins, Watch } from 'vue-property-decorator'
+// import i18n from '@/plugins/i18n'
 import { SocketActions } from '@/socketActions'
 import { AppDirectory, AppFile, AppFileWithMeta, FilesUpload } from '@/store/files/types'
 import { Waits } from '@/globals'
@@ -123,10 +127,6 @@ import { AxiosResponse } from 'axios'
   }
 })
 export default class FileSystem extends Mixins(StateMixin, FilesMixin, ServicesMixin) {
-  // Title. Defaults to Jobs
-  @Prop({ type: String, default: 'Jobs' })
-  title!: string | string[];
-
   // Can be a list of roots, or a single root.
   @Prop({ type: [String, Array], required: true })
   roots!: string | string[];
@@ -139,12 +139,19 @@ export default class FileSystem extends Mixins(StateMixin, FilesMixin, ServicesM
   @Prop({ type: [Number, String] })
   height!: number | string;
 
+  // Constrain height
+  @Prop({ type: [Number, String] })
+  maxHeight!: number | string;
+
   // Maintains the path and root.
   // currentPath = ''
   currentRoot = ''
 
   // Maintains search state.
   search = ''
+
+  // Maintains filter state.
+  filters = []
 
   // Maintains content menu state.
   contextMenuState: any = {
@@ -197,6 +204,8 @@ export default class FileSystem extends Mixins(StateMixin, FilesMixin, ServicesM
 
   @Watch('disabled')
   onDisabledChange (val: boolean) {
+    // We know this always fires on mount, so we rely on it for our initial
+    // load too.
     if (!val) {
       this.loadFiles(this.currentPath)
     }
@@ -250,7 +259,6 @@ export default class FileSystem extends Mixins(StateMixin, FilesMixin, ServicesM
   // Set the initial root, and load the dir.
   mounted () {
     this.currentRoot = this.availableRoots[0]
-    this.loadFiles(this.currentPath)
   }
 
   // If the root changes, reset the path and load the root path files.
@@ -274,6 +282,11 @@ export default class FileSystem extends Mixins(StateMixin, FilesMixin, ServicesM
   // Refreshes a path by loading the directory.
   refreshPath (path: string) {
     if (path && !this.disabled) SocketActions.serverFilesGetDirectory(this.currentRoot, path)
+  }
+
+  // Handles a user filtering the data.
+  handleFilter (filters: any) {
+    this.filters = filters
   }
 
   // Handles a user clicking a file row.
@@ -311,14 +324,14 @@ export default class FileSystem extends Mixins(StateMixin, FilesMixin, ServicesM
   */
   handleRenameDialog (item: AppFile | AppFileWithMeta | AppDirectory) {
     if (this.disabled) return
-    let title = 'Rename Directory'
-    let label = 'Directory name'
+    let title = this.$t('app.file_system.title.rename_dir')
+    let label = this.$t('app.file_system.label.dir_name')
     const rules: any = [
-      (v: string) => !!v || 'Required'
+      (v: string) => !!v || this.$t('app.general.simple_form.error.required')
     ]
     if (item.type === 'file') {
-      title = 'Rename File'
-      label = 'Filename'
+      title = this.$t('app.file_system.title.rename_file')
+      label = this.$t('app.file_system.label.file_name')
     }
     this.fileNameDialogState = {
       open: true,
@@ -334,10 +347,10 @@ export default class FileSystem extends Mixins(StateMixin, FilesMixin, ServicesM
     if (this.disabled) return
     this.fileNameDialogState = {
       open: true,
-      title: 'Add File',
-      label: 'Filename',
+      title: this.$t('app.file_system.title.add_file'),
+      label: this.$t('app.file_system.label.file_name'),
       value: '',
-      rules: [(v: string) => !!v || 'Required'],
+      rules: [(v: string) => !!v || this.$t('app.general.simple_form.error.required')],
       handler: this.handleAddFile
     }
   }
@@ -346,10 +359,10 @@ export default class FileSystem extends Mixins(StateMixin, FilesMixin, ServicesM
     if (this.disabled) return
     this.fileNameDialogState = {
       open: true,
-      title: 'Add Directory',
-      label: 'Directory name',
+      title: this.$t('app.file_system.title.add_dir'),
+      label: this.$t('app.file_system.label.dir_name'),
       value: '',
-      rules: [(v: string) => !!v || 'Required'],
+      rules: [(v: string) => !!v || this.$t('app.general.simple_form.error.required')],
       handler: this.handleAddDir
     }
   }
@@ -438,9 +451,12 @@ export default class FileSystem extends Mixins(StateMixin, FilesMixin, ServicesM
 
   handleRemove (file: AppFile | AppFileWithMeta | AppDirectory) {
     if (this.disabled) return
-    let text = 'Are you sure?'
-    if (file.type === 'directory') text = 'Are you sure? This will delete all files and folders within.'
-    this.$confirm(text)
+    let text = this.$tc('app.general.simple_form.msg.confirm')
+    if (file.type === 'directory') text = this.$tc('app.file_system.msg.confirm')
+    this.$confirm(
+      text,
+      { title: this.$tc('app.general.label.confirm'), color: 'secondary', icon: '$error' }
+    )
       .then(res => {
         if (res) {
           if (file.type === 'directory') SocketActions.serverFilesDeleteDirectory(`${this.currentPath}/${file.name}`)
@@ -484,22 +500,6 @@ export default class FileSystem extends Mixins(StateMixin, FilesMixin, ServicesM
       if (file.first_layer_bed_temp > 0) {
         this.sendGcode(`M140 S${file.first_layer_bed_temp}`)
       }
-
-      // 104 for extruder
-      // 140 for bed
-
-      // let gcode = ""
-      // if (this.contextMenu.item.first_layer_extr_temp > 0) {
-      //     gcode = "M104 S"+this.contextMenu.item.first_layer_extr_temp
-      //     this.$store.commit('server/addEvent', { message: gcode, type: 'command' })
-      //   this.$socket.sendObj('printer.gcode.script', { script: gcode })
-      // }
-
-      // if (this.contextMenu.item.first_layer_bed_temp > 0) {
-      //     gcode = "M140 S"+this.contextMenu.item.first_layer_bed_temp
-      //     this.$store.commit('server/addEvent', { message: gcode, type: 'command' })
-      //   this.$socket.sendObj('printer.gcode.script', { script: gcode })
-      // }
     }
   }
 

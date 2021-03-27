@@ -2,27 +2,34 @@
 
 ## Next Up
 
+- add git history
+  - move versions to configure page
+  - reogranize service restarts / vs klipper firmware restarts
+
 - use components instead of plugins with moonraker
-- fix reprint menu to have correct cursor
-- add job history search
-- review validations on settings pages
+
+- More macro layout options (categorize macros, ability to define layout in some way, color)
+
+- alternate bed mesh scales
+
 - move config widgets and sort into config vs tune
+  - general component layout re-arrangement
+  - rename device power store
+- change card states to db and be driven by getters..
+- move klipper restarts elsewhere so service restarts are their own thing
+  - allow users to restart webcamd service if webcam is enabled
+
+- allow different resolutions with bed mesh viewer
 
 - update docs to mention cura uploads
+- docs on configuring a camera
+- update docs re: output pins
 
-- add git history
-- second webcam
-- change card states to db and be driven by getters..
 - bulk actions to delete or move?
 - move dialog
 - bulk action move
-
 - cleanup card layout stuff
-- rename device power store
-- allow users to restart webcamd service if webcam is enabled
 - sync instances across moonraker db
-- More macro layout options (categorize macros, ability to define layout in some way, color)
-- i18n (translations)
 
 - allow deletion of all printers on fluidd.xyz
 - show known meta data on print dialog (for dashboard jobs page..)?
@@ -30,10 +37,7 @@
 
 ## Filesystem Improvements
 
-- add filesystem usage
-- ability to move folder / files
 - Bulk actions on files
-- Drag and Drop move.
 
 ## Refactoring / Core
 
@@ -42,8 +46,6 @@
   reactive data that is changed so often
 
 - adding multiple printers to carry over between devices
-- cleanup socket store / move socket out and keep printer data
-- split utils mixin into many mixins, in a logical way
 - add a cached throttle to (socket notifications) temp updates, print timers, position trackers.
 
 ## Known Bugs

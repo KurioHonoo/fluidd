@@ -14,7 +14,7 @@
           v-bind="attrs"
           v-on="on"
         >
-          Select Theme
+          {{ $t('app.setting.btn.select_theme') }}
         </v-btn>
       </template>
       <v-color-picker

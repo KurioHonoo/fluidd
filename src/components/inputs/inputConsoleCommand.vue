@@ -11,7 +11,7 @@
       single-line
       dense
       hide-details
-      placeholder="'tab' for autocomplete, 'arrows' for history, 'help' for commands"
+      :placeholder="$t(`app.console.placeholder.command`)"
       @keyup.enter="emitSend(newValue)"
       @keyup.up="historyUp()"
       @keyup.down="historyDown()"

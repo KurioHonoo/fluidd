@@ -12,8 +12,8 @@
       :search="search"
       item-key="name"
       height="100%"
-      no-data-text="No files"
-      no-results-text="No files found"
+      :no-data-text="$t('app.file_system.msg.not_found')"
+      :no-results-text="$t('app.file_system.msg.not_found')"
       sort-by="modified"
       hide-default-footer
       class="rounded-0"
@@ -42,13 +42,12 @@
             <v-icon
               v-if="!item.thumbnails || !item.thumbnails.length"
               :small="dense"
-              :color="(item.type === 'file') ? 'grey' : 'primary'"
-              class="mr-2">
+              :color="(item.type === 'file') ? 'grey' : 'primary'">
               {{ (item.type === 'file' ? '$file' : item.name === '..' ? '$folderUp' : '$folder') }}
             </v-icon>
             <img
               v-if="item.thumbnails && item.thumbnails.length"
-              class="mr-2 file-icon-thumb"
+              class="file-icon-thumb"
               :src="getThumbUrl(item.thumbnails, item.path)"
               :width="(dense) ? 16 : 24"
             />
@@ -101,7 +100,7 @@
 
 <script lang="ts">
 import { Component, Prop, Mixins } from 'vue-property-decorator'
-import { AppDirectory, AppFile, AppFileWithMeta } from '@/store/files/types'
+import { AppDirectory, AppFile, AppFileWithMeta, FileFilter } from '@/store/files/types'
 import FilesMixin from '@/mixins/files'
 
 @Component({})
@@ -121,6 +120,9 @@ export default class FileSystemBrowser extends Mixins(FilesMixin) {
   @Prop({ type: String, required: false })
   search!: string;
 
+  @Prop({ type: Array, default: () => { return [] } })
+  filters!: FileFilter[]
+
   @Prop({ type: Boolean, required: true })
   dragState!: boolean;
 
@@ -130,28 +132,41 @@ export default class FileSystemBrowser extends Mixins(FilesMixin) {
   get headers () {
     let headers: any = [
       { text: '', value: 'data-table-icons', sortable: false, width: '24px' },
-      { text: 'name', value: 'name' }
+      { text: this.$t('app.general.table.header.name'), value: 'name' }
     ]
 
     if (this.showMetaData) {
       headers = [
         ...headers,
-        { text: 'height', value: 'object_height' },
-        { text: 'layer height', value: 'layer_height' },
-        { text: 'filament', value: 'filament_total' },
-        { text: 'slicer', value: 'slicer' },
-        { text: 'estimated time', value: 'estimated_time' }
+        { text: this.$t('app.general.table.header.height'), value: 'object_height' },
+        { text: this.$t('app.general.table.header.layer_height'), value: 'layer_height' },
+        { text: this.$t('app.general.table.header.filament_used'), value: 'filament_total' },
+        { text: this.$t('app.general.table.header.slicer'), value: 'slicer' },
+        { text: this.$t('app.general.table.header.estimated_time'), value: 'estimated_time' }
       ]
     }
 
     if (this.showLastPrinted) {
-      headers.push({ text: 'last printed', value: 'print_start_time' })
+      headers.push({
+        text: this.$t('app.general.table.header.last_printed'),
+        value: 'print_start_time',
+        filter: (value: string, search: string | null, item: AppFile | AppFileWithMeta | AppDirectory) => {
+          const filter = this.filters.find(filter => filter.value === 'print_start_time')
+          if (
+            !this.filters ||
+            this.filters.length === 0 ||
+            !filter ||
+            item.type !== 'file'
+          ) return true
+          return item.print_start_time === null
+        }
+      })
     }
 
     headers = [
       ...headers,
-      { text: 'modified', value: 'modified', width: '1%' },
-      { text: 'size', value: 'size', width: '1%', align: 'end' }
+      { text: this.$t('app.general.table.header.modified'), value: 'modified', width: '1%' },
+      { text: this.$t('app.general.table.header.size'), value: 'size', width: '1%', align: 'end' }
     ]
 
     return headers

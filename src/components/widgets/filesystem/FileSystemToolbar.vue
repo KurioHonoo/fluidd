@@ -34,7 +34,7 @@
         </v-btn>
       </template>
       <slot>
-        <span>Low on disk space</span>
+        <span>{{ $t('app.file_system.tooltip.low_on_space') }}</span>
       </slot>
     </v-tooltip>
 
@@ -51,7 +51,7 @@
         </v-btn>
       </template>
       <slot>
-        <span>Filesystem disabled. Reconnect klipper.</span>
+        <span>{{ $t('app.file_system.tooltip.disabled') }}</span>
       </slot>
     </v-tooltip>
 
@@ -63,6 +63,14 @@
       text>
       <v-icon>$refresh</v-icon>
     </v-btn>
+
+    <file-system-filter-menu
+      v-if="!readonly && root === 'gcodes' && supportsHistoryPlugin"
+      :root="root"
+      :disabled="disabled"
+      @change="$emit('filter', $event)"
+    >
+    </file-system-filter-menu>
 
     <file-system-menu
       v-if="!readonly"
@@ -94,10 +102,12 @@
 import { Component, Prop, Mixins } from 'vue-property-decorator'
 import StatesMixin from '@/mixins/state'
 import FileSystemMenu from './FileSystemMenu.vue'
+import FileSystemFilterMenu from './FileSystemFilterMenu.vue'
 
 @Component({
   components: {
-    FileSystemMenu
+    FileSystemMenu,
+    FileSystemFilterMenu
   }
 })
 export default class FileSystemToolbar extends Mixins(StatesMixin) {
@@ -130,6 +140,10 @@ export default class FileSystemToolbar extends Mixins(StatesMixin) {
   get lowOnSpace () {
     if (!this.klippyReady) return false
     return this.$store.getters['files/getLowOnSpace']
+  }
+
+  get supportsHistoryPlugin () {
+    return this.$store.getters['server/pluginSupport']('history')
   }
 
   handleUpload (files: FileList, print: boolean) {

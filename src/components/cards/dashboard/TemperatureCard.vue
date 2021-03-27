@@ -1,6 +1,6 @@
 <template>
   <collapsable-card
-    title="Thermals"
+    :title="$t('app.general.title.temperature')"
     icon="$fire"
     :lazy="false"
     :draggable="true"
@@ -10,13 +10,11 @@
 
     <template v-slot:title>
       <v-icon left>$fire</v-icon>
-      <span class="font-weight-light">Thermals</span>
+      <span class="font-weight-light">{{ $t('app.general.title.temperature') }}</span>
       <inline-help
         bottom
         small
-        tooltip="Hold shift to zoom.<br />
-          Click an item to toggle in the graph.<br />
-          Click a power to toggle in the graph."
+        :tooltip="$t('app.chart.tooltip.help')"
       ></inline-help>
 
     </template>
